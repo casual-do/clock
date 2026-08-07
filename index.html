@@ -1,10 +1,21 @@
 <!doctype html>
-<html lang="zh-CN"> 
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f4efe5" />
+  <meta name="theme-color" content="#f4efe5" id="theme-color" />
   <title>北京时间</title>
+  <script>
+    (() => {
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      let savedTheme = null;
+      try { savedTheme = localStorage.getItem('clock-theme'); } catch {}
+      document.documentElement.dataset.theme =
+        savedTheme === 'light' || savedTheme === 'dark'
+          ? savedTheme
+          : systemPrefersDark ? 'dark' : 'light';
+    })();
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -223,6 +234,90 @@
       box-shadow: 0 0 0 3px rgba(92, 155, 121, .12);
     }
 
+    .theme-toggle {
+      position: fixed;
+      z-index: 10;
+      top: max(1rem, env(safe-area-inset-top));
+      right: max(1rem, env(safe-area-inset-right));
+      width: 2.8rem;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(31, 42, 48, .13);
+      border-radius: 50%;
+      color: var(--ink);
+      background: rgba(255, 255, 255, .52);
+      box-shadow: 0 .5rem 1.5rem rgba(54, 66, 65, .1);
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: color .25s ease, background-color .25s ease, border-color .25s ease, transform .2s ease;
+    }
+
+    .theme-toggle:hover { transform: translateY(-2px); }
+
+    .theme-toggle:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+      outline-offset: 3px;
+    }
+
+    .theme-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      transition: transform .3s ease;
+    }
+
+    :root[data-theme="light"] .theme-icon::before { content: "☾"; }
+    :root[data-theme="dark"] .theme-icon::before { content: "☀"; }
+    :root[data-theme="dark"] .theme-icon { transform: rotate(90deg); }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --ink: #eef3f0;
+      --muted: #a2afac;
+      --accent: #ff8068;
+      --paper: #192223;
+    }
+
+    :root[data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 20% 18%, rgba(63, 79, 77, .42) 0 7%, transparent 26%),
+        radial-gradient(circle at 83% 78%, rgba(38, 67, 61, .48), transparent 27%),
+        linear-gradient(145deg, #111718 0%, #17201f 100%);
+    }
+
+    :root[data-theme="dark"] body::before,
+    :root[data-theme="dark"] body::after {
+      border-color: rgba(221, 235, 229, .08);
+    }
+
+    :root[data-theme="dark"] .clock {
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0 62%, rgba(255, 255, 255, .035) 62.4% 63%, transparent 63.4%),
+        var(--paper);
+      box-shadow:
+        0 1.6rem 3.2rem rgba(0, 0, 0, .38),
+        inset 0 0 0 1px rgba(255, 255, 255, .06),
+        inset 0 0 2rem rgba(0, 0, 0, .18);
+    }
+
+    :root[data-theme="dark"] .tick::before { background: #667473; }
+    :root[data-theme="dark"] .tick.major::before { background: var(--ink); }
+
+    :root[data-theme="dark"] .zone {
+      border-color: rgba(238, 243, 240, .1);
+      color: #b6c2bf;
+      background: rgba(255, 255, 255, .045);
+    }
+
+    :root[data-theme="dark"] .theme-toggle {
+      border-color: rgba(238, 243, 240, .12);
+      background: rgba(25, 34, 35, .72);
+      box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .24);
+    }
+
+    body, .clock, .zone { transition: color .3s ease, background .3s ease, border-color .3s ease, box-shadow .3s ease; }
+
     @media (max-height: 650px) {
       main { gap: .8rem; padding-block: .8rem; }
       .clock { width: min(58vw, 52vh, 20rem); }
@@ -235,13 +330,12 @@
   </style>
 </head>
 <body>
-  <main>
-    <header class="heading">
-      <p class="eyebrow">China Standard Time</p>
-      <h1>北京时间</h1>
-    </header>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换到暗色主题" title="切换到暗色主题">
+    <span class="theme-icon" aria-hidden="true"></span>
+  </button>
 
-    <section class="clock" aria-label="北京时间模拟时钟">
+  <main>
+    <section class="clock" style="width: min(86vw, 66vh, 31rem)" aria-label="北京时间模拟时钟">
       <div id="ticks" aria-hidden="true"></div>
       <span class="numeral" style="left:50%;top:12%">12</span>
       <span class="numeral" style="left:88%;top:50%">3</span>
@@ -268,6 +362,33 @@
     const secondHand = document.querySelector('#second-hand');
     const digitalTime = document.querySelector('#digital-time');
     const dateText = document.querySelector('#date-text');
+    const themeToggle = document.querySelector('#theme-toggle');
+    const themeColor = document.querySelector('#theme-color');
+    const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function getSavedTheme() {
+      try { return localStorage.getItem('clock-theme'); } catch { return null; }
+    }
+
+    function applyTheme(theme) {
+      const isDark = theme === 'dark';
+      document.documentElement.dataset.theme = theme;
+      themeToggle.setAttribute('aria-label', isDark ? '切换到浅色主题' : '切换到暗色主题');
+      themeToggle.title = isDark ? '切换到浅色主题' : '切换到暗色主题';
+      themeColor.content = isDark ? '#111718' : '#f4efe5';
+    }
+
+    applyTheme(document.documentElement.dataset.theme);
+
+    themeToggle.addEventListener('click', () => {
+      const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(nextTheme);
+      try { localStorage.setItem('clock-theme', nextTheme); } catch {}
+    });
+
+    colorScheme.addEventListener('change', event => {
+      if (!getSavedTheme()) applyTheme(event.matches ? 'dark' : 'light');
+    });
 
     const tickFragment = document.createDocumentFragment();
     for (let index = 0; index < 60; index += 1) {
@@ -285,6 +406,31 @@
       day: 'numeric',
       weekday: 'long'
     });
+
+    const lunarFormatter = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', {
+      timeZone: 'Asia/Shanghai',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    function formatLunarDay(day) {
+      const numerals = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+      if (day < 10) return `初${numerals[day]}`;
+      if (day === 10) return '初十';
+      if (day < 20) return `十${numerals[day - 10]}`;
+      if (day === 20) return '二十';
+      if (day < 30) return `廿${numerals[day - 20]}`;
+      return '三十';
+    }
+
+    function formatLunarDate(date) {
+      const parts = lunarFormatter.formatToParts(date);
+      const month = parts.find(part => part.type === 'month')?.value;
+      const day = Number(parts.find(part => part.type === 'day')?.value);
+
+      if (!month || !Number.isInteger(day)) return `农历${lunarFormatter.format(date)}`;
+      return `农历${month}${formatLunarDay(day)}`;
+    }
 
     let lastSecond = -1;
 
@@ -306,7 +452,7 @@
         lastSecond = wholeSecond;
         const pad = value => String(value).padStart(2, '0');
         digitalTime.textContent = `${pad(beijing.getUTCHours())}:${pad(beijing.getUTCMinutes())}:${pad(wholeSecond)}`;
-        dateText.textContent = dateFormatter.format(now);
+        dateText.textContent = `${dateFormatter.format(now)} · ${formatLunarDate(now)}`;
         document.title = `${digitalTime.textContent} · 北京时间`;
       }
 
