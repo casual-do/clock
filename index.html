@@ -354,6 +354,201 @@
       transition: transform .3s ease;
     }
 
+    .countdown-toggle { position: relative; }
+
+    .countdown-toggle.is-active {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .countdown-toggle.is-active::after {
+      content: "";
+      position: absolute;
+      top: .2rem;
+      right: .2rem;
+      width: .45rem;
+      aspect-ratio: 1;
+      border: 2px solid var(--paper);
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .countdown-panel {
+      position: fixed;
+      z-index: 20;
+      right: max(1rem, env(safe-area-inset-right));
+      bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.6rem);
+      width: min(calc(100vw - 2rem), 23rem);
+      padding: 1.15rem;
+      border: 1px solid rgba(31, 42, 48, .13);
+      border-radius: 1.25rem;
+      color: var(--ink);
+      background: color-mix(in srgb, var(--paper) 92%, transparent);
+      box-shadow: 0 1.2rem 3rem rgba(54, 66, 65, .2);
+      backdrop-filter: blur(18px);
+    }
+
+    .countdown-panel[hidden] { display: none; }
+
+    .countdown-panel.is-finished {
+      border-color: var(--accent);
+      box-shadow: 0 1.2rem 3rem rgba(54, 66, 65, .2), 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .countdown-header,
+    .countdown-notification,
+    .countdown-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .countdown-header { justify-content: space-between; }
+
+    .countdown-title {
+      margin: 0;
+      font-family: Georgia, "Songti SC", serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+    }
+
+    .countdown-close {
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: var(--muted);
+      background: transparent;
+      font: inherit;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    .countdown-close:hover { background: rgba(31, 42, 48, .07); }
+
+    .countdown-display {
+      display: block;
+      margin: .75rem 0 .2rem;
+      font-size: clamp(2rem, 11vw, 3.1rem);
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: .06em;
+      text-align: center;
+    }
+
+    .countdown-status {
+      min-height: 1.3em;
+      margin: 0 0 .9rem;
+      color: var(--muted);
+      font-size: .76rem;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .countdown-status[data-state="error"] { color: var(--accent); }
+
+    .countdown-form { display: grid; gap: .8rem; }
+
+    .countdown-label {
+      display: grid;
+      gap: .35rem;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .countdown-input,
+    .duration-input {
+      width: 100%;
+      border: 1px solid rgba(31, 42, 48, .14);
+      border-radius: .7rem;
+      color: var(--ink);
+      background: rgba(255, 255, 255, .48);
+      font: inherit;
+      outline: none;
+    }
+
+    .countdown-input {
+      height: 2.5rem;
+      padding: 0 .75rem;
+    }
+
+    .countdown-input:focus,
+    .duration-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+    }
+
+    .duration-fields {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .55rem;
+    }
+
+    .duration-field {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: .25rem;
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .duration-input {
+      min-width: 0;
+      height: 2.5rem;
+      padding: 0 .35rem 0 .65rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-actions { gap: .55rem; }
+
+    .countdown-action {
+      min-height: 2.5rem;
+      flex: 1;
+      padding: .55rem .8rem;
+      border: 1px solid transparent;
+      border-radius: .75rem;
+      font: inherit;
+      font-size: .82rem;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .countdown-action:disabled { cursor: default; opacity: .5; }
+
+    .countdown-primary {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .countdown-secondary {
+      border-color: rgba(31, 42, 48, .13);
+      color: var(--ink);
+      background: transparent;
+    }
+
+    .countdown-notification {
+      justify-content: space-between;
+      gap: .75rem;
+      margin-top: .9rem;
+      padding-top: .85rem;
+      border-top: 1px solid rgba(31, 42, 48, .09);
+    }
+
+    .notification-status {
+      color: var(--muted);
+      font-size: .7rem;
+      line-height: 1.35;
+    }
+
+    .notification-button {
+      flex: 0 0 auto;
+      min-height: 2rem;
+      padding: .35rem .65rem;
+      font-size: .72rem;
+    }
+
     :root[data-theme="light"] .theme-icon::before { content: "☾"; }
     :root[data-theme="dark"] .theme-icon::before { content: "☀"; }
     :root[data-theme="dark"] .theme-icon { transform: rotate(90deg); }
@@ -409,12 +604,39 @@
       background: var(--accent);
     }
 
+    :root[data-theme="dark"] .countdown-panel {
+      border-color: rgba(238, 243, 240, .12);
+      background: rgba(25, 34, 35, .9);
+      box-shadow: 0 1.2rem 3rem rgba(0, 0, 0, .4);
+    }
+
+    :root[data-theme="dark"] .countdown-input,
+    :root[data-theme="dark"] .duration-input {
+      border-color: rgba(238, 243, 240, .13);
+      background: rgba(255, 255, 255, .055);
+    }
+
+    :root[data-theme="dark"] .countdown-secondary {
+      border-color: rgba(238, 243, 240, .13);
+    }
+
+    :root[data-theme="dark"] .countdown-close:hover { background: rgba(255, 255, 255, .07); }
+    :root[data-theme="dark"] .countdown-notification { border-top-color: rgba(238, 243, 240, .09); }
+
     body, .clock, .zone { transition: color .3s ease, background .3s ease, border-color .3s ease, box-shadow .3s ease; }
 
     @media (max-height: 650px) {
       main { gap: .8rem; padding-block: .8rem; }
       .clock { width: min(75vw, 70vh, 30rem); }
       .zone { margin-top: .4rem; }
+    }
+
+    @media (max-width: 480px) {
+      .countdown-panel {
+        right: max(.65rem, env(safe-area-inset-right));
+        bottom: calc(max(.65rem, env(safe-area-inset-bottom)) + 3.6rem);
+        width: calc(100vw - 1.3rem);
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -425,8 +647,11 @@
 </head>
 <body>
   <div class="controls" id="controls" role="group" aria-label="时钟显示设置">
-    <button class="control-button settings-toggle" id="settings-toggle" type="button" aria-label="展开设置" aria-expanded="false" aria-controls="numeral-toggle clock-only-toggle theme-toggle" title="设置">
+    <button class="control-button settings-toggle" id="settings-toggle" type="button" aria-label="展开设置" aria-expanded="false" aria-controls="countdown-toggle numeral-toggle clock-only-toggle theme-toggle" title="设置">
       <span class="settings-icon" aria-hidden="true">⚙︎</span>
+    </button>
+    <button class="control-button control-option countdown-toggle" id="countdown-toggle" type="button" aria-label="打开倒计时" aria-expanded="false" aria-controls="countdown-panel" title="倒计时">
+      <span class="control-icon" aria-hidden="true">⏳</span>
     </button>
     <button class="control-button control-option mode-toggle" id="numeral-toggle" type="button" aria-label="显示完整数字刻度" aria-pressed="false" title="显示完整数字刻度">
       <span class="control-icon" aria-hidden="true">⑫</span>
@@ -438,6 +663,43 @@
       <span class="theme-icon" aria-hidden="true"></span>
     </button>
   </div>
+
+  <aside class="countdown-panel" id="countdown-panel" role="dialog" aria-labelledby="countdown-heading" hidden>
+    <div class="countdown-header">
+      <h2 class="countdown-title" id="countdown-heading">倒计时</h2>
+      <button class="countdown-close" id="countdown-close" type="button" aria-label="关闭倒计时面板">×</button>
+    </div>
+    <output class="countdown-display" id="countdown-display" aria-live="off">00:05:00</output>
+    <p class="countdown-status" id="countdown-status" aria-live="polite">设置时长后开始</p>
+    <form class="countdown-form" id="countdown-form">
+      <label class="countdown-label" for="countdown-label">
+        提醒事项
+        <input class="countdown-input" id="countdown-label" name="label" type="text" maxlength="40" placeholder="例如：休息结束" autocomplete="off" />
+      </label>
+      <div class="duration-fields" aria-label="倒计时时长">
+        <label class="duration-field">
+          <input class="duration-input" id="countdown-hours" name="hours" type="number" min="0" max="99" value="0" inputmode="numeric" aria-label="小时" />
+          <span>时</span>
+        </label>
+        <label class="duration-field">
+          <input class="duration-input" id="countdown-minutes" name="minutes" type="number" min="0" max="59" value="5" inputmode="numeric" aria-label="分钟" />
+          <span>分</span>
+        </label>
+        <label class="duration-field">
+          <input class="duration-input" id="countdown-seconds" name="seconds" type="number" min="0" max="59" value="0" inputmode="numeric" aria-label="秒" />
+          <span>秒</span>
+        </label>
+      </div>
+      <div class="countdown-actions">
+        <button class="countdown-action countdown-primary" type="submit">开始倒计时</button>
+        <button class="countdown-action countdown-secondary" id="countdown-cancel" type="button" disabled>取消</button>
+      </div>
+    </form>
+    <div class="countdown-notification">
+      <span class="notification-status" id="notification-status">正在检查通知权限…</span>
+      <button class="countdown-action countdown-secondary notification-button" id="notification-enable" type="button">启用通知</button>
+    </div>
+  </aside>
 
   <main>
     <section class="clock" aria-label="北京时间模拟时钟">
@@ -479,6 +741,19 @@
     const dateText = document.querySelector('#date-text');
     const controls = document.querySelector('#controls');
     const settingsToggle = document.querySelector('#settings-toggle');
+    const countdownToggle = document.querySelector('#countdown-toggle');
+    const countdownPanel = document.querySelector('#countdown-panel');
+    const countdownClose = document.querySelector('#countdown-close');
+    const countdownDisplay = document.querySelector('#countdown-display');
+    const countdownStatus = document.querySelector('#countdown-status');
+    const countdownForm = document.querySelector('#countdown-form');
+    const countdownLabel = document.querySelector('#countdown-label');
+    const countdownHours = document.querySelector('#countdown-hours');
+    const countdownMinutes = document.querySelector('#countdown-minutes');
+    const countdownSeconds = document.querySelector('#countdown-seconds');
+    const countdownCancel = document.querySelector('#countdown-cancel');
+    const notificationStatus = document.querySelector('#notification-status');
+    const notificationEnable = document.querySelector('#notification-enable');
     const numeralToggle = document.querySelector('#numeral-toggle');
     const clockOnlyToggle = document.querySelector('#clock-only-toggle');
     const themeToggle = document.querySelector('#theme-toggle');
@@ -519,6 +794,9 @@
       if (!controls.contains(event.target)) {
         controls.classList.remove('is-expanded');
         scheduleControlsSync();
+      }
+      if (!countdownPanel.hidden && !countdownPanel.contains(event.target) && !countdownToggle.contains(event.target)) {
+        setCountdownPanelOpen(false);
       }
     });
 
@@ -576,6 +854,241 @@
     colorScheme.addEventListener('change', event => {
       if (!getSavedTheme()) applyTheme(event.matches ? 'dark' : 'light');
     });
+
+    const COUNTDOWN_STORAGE_KEY = 'clock-countdown';
+    let countdownState = loadCountdownState();
+    let countdownWorker = null;
+    let countdownFallbackTimer = null;
+
+    function setCountdownPanelOpen(open) {
+      countdownPanel.hidden = !open;
+      countdownToggle.setAttribute('aria-expanded', String(open));
+      countdownToggle.setAttribute('aria-label', open ? '关闭倒计时' : '打开倒计时');
+      if (open) countdownLabel.focus({ preventScroll: true });
+    }
+
+    function formatCountdown(milliseconds) {
+      const totalSeconds = Math.max(0, Math.ceil(milliseconds / 1000));
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const pad = value => String(value).padStart(2, '0');
+      return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    function getInputDuration() {
+      const hours = Number(countdownHours.value);
+      const minutes = Number(countdownMinutes.value);
+      const seconds = Number(countdownSeconds.value);
+      if (![hours, minutes, seconds].every(Number.isFinite)) return 0;
+      if (hours < 0 || hours > 99 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) return 0;
+      return Math.floor((hours * 3600 + minutes * 60 + seconds) * 1000);
+    }
+
+    function loadCountdownState() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(COUNTDOWN_STORAGE_KEY));
+        if (parsed && Number.isFinite(parsed.endTime) && parsed.endTime > 0) {
+          return {
+            endTime: parsed.endTime,
+            duration: Number.isFinite(parsed.duration) ? parsed.duration : 0,
+            label: typeof parsed.label === 'string' ? parsed.label.slice(0, 40) : ''
+          };
+        }
+      } catch {}
+      return null;
+    }
+
+    function saveCountdownState() {
+      try {
+        if (countdownState) localStorage.setItem(COUNTDOWN_STORAGE_KEY, JSON.stringify(countdownState));
+        else localStorage.removeItem(COUNTDOWN_STORAGE_KEY);
+      } catch {}
+    }
+
+    function stopCountdownTicker() {
+      if (countdownWorker) {
+        countdownWorker.terminate();
+        countdownWorker = null;
+      }
+      if (countdownFallbackTimer !== null) {
+        clearInterval(countdownFallbackTimer);
+        countdownFallbackTimer = null;
+      }
+    }
+
+    function startCountdownTicker() {
+      stopCountdownTicker();
+      try {
+        const source = `
+          let timer = null;
+          self.onmessage = event => {
+            if (event.data === 'start') {
+              clearInterval(timer);
+              self.postMessage(Date.now());
+              timer = setInterval(() => self.postMessage(Date.now()), 500);
+            }
+          };
+        `;
+        const workerUrl = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
+        countdownWorker = new Worker(workerUrl);
+        URL.revokeObjectURL(workerUrl);
+        countdownWorker.onmessage = syncCountdown;
+        countdownWorker.onerror = () => {
+          stopCountdownTicker();
+          countdownFallbackTimer = setInterval(syncCountdown, 500);
+        };
+        countdownWorker.postMessage('start');
+      } catch {
+        countdownFallbackTimer = setInterval(syncCountdown, 500);
+      }
+    }
+
+    function renderCountdown(milliseconds) {
+      countdownDisplay.textContent = formatCountdown(milliseconds);
+      countdownToggle.classList.toggle('is-active', Boolean(countdownState));
+      countdownCancel.disabled = !countdownState;
+      if (countdownState) {
+        const endText = new Date(countdownState.endTime).toLocaleTimeString('zh-CN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        countdownStatus.dataset.state = '';
+        countdownStatus.textContent = `${countdownState.label || '倒计时'} · 预计 ${endText} 结束`;
+      }
+    }
+
+    function showCountdownNotification(label) {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      try {
+        const notification = new Notification(label || '倒计时结束', {
+          body: '设定的时间已经到了。',
+          tag: 'beijing-clock-countdown',
+          renotify: true
+        });
+        notification.onclick = () => {
+          window.focus();
+          setCountdownPanelOpen(true);
+          notification.close();
+        };
+      } catch {}
+    }
+
+    function finishCountdown() {
+      if (!countdownState) return;
+      const finishedLabel = countdownState.label || '倒计时结束';
+      countdownState = null;
+      saveCountdownState();
+      stopCountdownTicker();
+      countdownDisplay.textContent = '00:00:00';
+      countdownStatus.dataset.state = 'error';
+      countdownStatus.textContent = `${finishedLabel}：时间到！`;
+      countdownToggle.classList.remove('is-active');
+      countdownCancel.disabled = true;
+      countdownPanel.classList.add('is-finished');
+      showCountdownNotification(finishedLabel);
+    }
+
+    function syncCountdown() {
+      if (!countdownState) return;
+      const remaining = countdownState.endTime - Date.now();
+      if (remaining <= 0) finishCountdown();
+      else renderCountdown(remaining);
+    }
+
+    function updateNotificationStatus() {
+      if (!('Notification' in window)) {
+        notificationStatus.textContent = '当前浏览器不支持系统通知';
+        notificationEnable.hidden = true;
+        return;
+      }
+      notificationEnable.hidden = false;
+      if (Notification.permission === 'granted') {
+        notificationStatus.textContent = '系统通知已启用';
+        notificationEnable.textContent = '已启用';
+        notificationEnable.disabled = true;
+      } else if (Notification.permission === 'denied') {
+        notificationStatus.textContent = '通知已被拒绝，请在浏览器网站设置中开启';
+        notificationEnable.textContent = '已拒绝';
+        notificationEnable.disabled = true;
+      } else {
+        notificationStatus.textContent = '启用后，后台标签页到时会发送通知';
+        notificationEnable.textContent = '启用通知';
+        notificationEnable.disabled = false;
+      }
+    }
+
+    countdownToggle.addEventListener('click', () => {
+      setCountdownPanelOpen(countdownPanel.hidden);
+    });
+
+    countdownClose.addEventListener('click', () => setCountdownPanelOpen(false));
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !countdownPanel.hidden) setCountdownPanelOpen(false);
+    });
+
+    countdownForm.addEventListener('input', () => {
+      if (!countdownState) {
+        countdownDisplay.textContent = formatCountdown(getInputDuration());
+        countdownStatus.dataset.state = '';
+        countdownStatus.textContent = '设置时长后开始';
+        countdownPanel.classList.remove('is-finished');
+      }
+    });
+
+    countdownForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const duration = getInputDuration();
+      if (duration <= 0) {
+        countdownStatus.dataset.state = 'error';
+        countdownStatus.textContent = '请输入 1 秒以上的有效时长';
+        return;
+      }
+      countdownState = {
+        endTime: Date.now() + duration,
+        duration,
+        label: countdownLabel.value.trim().slice(0, 40)
+      };
+      countdownPanel.classList.remove('is-finished');
+      saveCountdownState();
+      renderCountdown(duration);
+      startCountdownTicker();
+    });
+
+    countdownCancel.addEventListener('click', () => {
+      countdownState = null;
+      saveCountdownState();
+      stopCountdownTicker();
+      countdownDisplay.textContent = formatCountdown(getInputDuration());
+      countdownStatus.dataset.state = '';
+      countdownStatus.textContent = '倒计时已取消';
+      countdownToggle.classList.remove('is-active');
+      countdownCancel.disabled = true;
+      countdownPanel.classList.remove('is-finished');
+    });
+
+    notificationEnable.addEventListener('click', async () => {
+      if (!('Notification' in window) || Notification.permission !== 'default') return;
+      try { await Notification.requestPermission(); } catch {}
+      updateNotificationStatus();
+    });
+
+    document.addEventListener('visibilitychange', syncCountdown);
+    window.addEventListener('focus', syncCountdown);
+
+    updateNotificationStatus();
+    if (countdownState) {
+      countdownLabel.value = countdownState.label;
+      if (countdownState.endTime <= Date.now()) finishCountdown();
+      else {
+        renderCountdown(countdownState.endTime - Date.now());
+        startCountdownTicker();
+      }
+    } else {
+      countdownDisplay.textContent = formatCountdown(getInputDuration());
+    }
 
     const tickFragment = document.createDocumentFragment();
     for (let index = 0; index < 60; index += 1) {
